@@ -1,4 +1,4 @@
-package com.example.demo.Services;
+package com.librarySystem.demo.Services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.library.management.model.User;
-import com.library.management.repository.UserRepository;
+import com.librarySystem.demo.Models.User;
+import com.librarySystem.demo.Repository.UserRepository;
 
 @Service
 public class UserService {

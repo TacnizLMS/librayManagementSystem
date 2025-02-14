@@ -1,4 +1,5 @@
-package com.example.demo.Controllers;
+package com.librarySystem.demo.Controllers;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.Services.UserService;
-import com.library.management.model.User;
+import com.librarySystem.demo.Models.User;
+import com.librarySystem.demo.Services.UserService;
 
 @RestController
 @RequestMapping("/api/users")
