@@ -31,15 +31,17 @@ public class BookController {
     @GetMapping("/{id}")
     public Optional<Book> getBookById(@PathVariable String id) {
         return bookService.getBookById(id);
-    }
+        }
 
-    @PostMapping
-    public Book addBook(@RequestBody Book book) {
-        return bookService.addBook(book);
-    }
+        @PostMapping
+        public Book addBook(@RequestBody Book book) {
+        Book addedBook = bookService.addBook(book);
+        System.out.println("Book added successfully");
+        return addedBook;
+        }
 
-    @PutMapping("/{id}")
-    public Book updateBook(@PathVariable String id, @RequestBody Book book) {
+        @PutMapping("/{id}")
+        public Book updateBook(@PathVariable String id, @RequestBody Book book) {
         return bookService.updateBook(id, book);
     }
 
