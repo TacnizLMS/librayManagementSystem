@@ -1,6 +1,5 @@
 package com.librarySystem.demo.Controllers;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +34,9 @@ public class BookController {
 
     @PostMapping
     public Book addBook(@RequestBody Book book) {
-        return bookService.addBook(book);
+        Book addedBook = bookService.addBook(book);
+        System.out.println("Book added successfully");
+        return addedBook;
     }
 
     @PutMapping("/{id}")
