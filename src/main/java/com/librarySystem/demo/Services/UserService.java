@@ -4,20 +4,23 @@ import java.util.List;
 
 import com.librarySystem.demo.Models.User;
 
-
-
 public interface UserService {
 
-     
-     public List<User> getAllUser()  ;
-     
-     public User findUserProfileByJwt(String jwt);
-     
-     public User findUserByEmail(String email) ;
-     
-     public User findUserById(String userId) ;
+    List<User> getAllUser();
 
-     public List<User> findAllUsers();
-      
-         
+    User findUserProfileByJwt(String jwt);
+
+    User findUserByEmail(String email);
+
+    User findUserById(String userId);
+
+    List<User> findAllUsers();
+
+    // ✅ New methods for email verification
+    User findByVerificationToken(String token);
+
+    User updateUser(User user);
+
+    
 }
+
