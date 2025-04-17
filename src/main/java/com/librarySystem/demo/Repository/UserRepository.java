@@ -10,6 +10,8 @@ import com.librarySystem.demo.Models.User;
 public interface UserRepository extends MongoRepository<User,String> {
     @Query("{email :?0}")
     User findByEmail(String email);
+    User findByVerificationToken(String token);
+
     
 
 }

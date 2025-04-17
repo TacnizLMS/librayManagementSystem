@@ -25,12 +25,14 @@ public class JwtProvider {
         
         // Generate the JWT token
         return Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME)) // Set expiration to 1 day
-                .claim("email", auth.getName()) // Add the username (email) as a claim
-                .claim("authorities", roles) // Add authorities (roles) as a claim
-                .signWith(key) // Sign the token with the secret key
-                .compact(); // Return the token as a compact string
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME)) // Set expiration to 1 day
+            .claim("id", ((Object[]) auth.getCredentials())[0]) // Extract and add the id from credentials
+            .claim("roles", ((Object[]) auth.getCredentials())[1]) // Extract and add the role from credentials
+            .claim("email", auth.getName()) // Add the username (email) as a claim
+            .claim("authorities", roles) // Add authorities (roles) as a claim
+            .signWith(key) // Sign the token with the secret key
+            .compact(); // Return the token as a compact string
     }
 
     // Method to extract email from JWT token
