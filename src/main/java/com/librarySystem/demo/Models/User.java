@@ -23,10 +23,9 @@ public class User {
     private String password;
     private String role = "ROLE_CUSTOMER";
     private String mobile;
-    
+    private boolean isVerified = false;
+    private String verificationToken;
 
-    
-    
     public String getId() {
         return id;
     }
@@ -69,5 +68,16 @@ public class User {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
-    
+    public boolean isVerified() {
+        return isVerified;
+    }
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
 }
