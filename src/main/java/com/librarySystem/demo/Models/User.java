@@ -21,7 +21,7 @@ public class User {
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    private String role = "ROLE_CUSTOMER";
+    private String role;
     private String mobile;
     private boolean isVerified = false;
     private String verificationToken;
