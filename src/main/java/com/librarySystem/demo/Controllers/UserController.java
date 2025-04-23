@@ -105,7 +105,7 @@ public class UserController {
         newUser.setVerified(false); // Mark as unverified
 
         // Send verification email
-        emailService.sendVerificationEmail(email, verificationToken);
+        emailService.sendVerificationEmail(email, verificationToken, role);
         userRepository.save(newUser);
         System.out.println("User registered: " + newUser.getEmail());
         // Response

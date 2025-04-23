@@ -21,10 +21,14 @@ public class EmailService {
     private UserRepository userRepository;
     
 
-    public void sendVerificationEmail(String toEmail, String token) {
+    public void sendVerificationEmail(String toEmail, String token, String role) {
         String link = "http://localhost:8080/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
+        if (role.equals("Admin")) {
+            System.out.println("Sending email to admin");
+            toEmail = "librarymstacniz@gmail.com";  // Change this to your desired email
+        }
         message.setTo(toEmail);
         message.setSubject("Library Account Verification");
         message.setText("Click the following link to verify your email: " + link);
