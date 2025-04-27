@@ -27,11 +27,16 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         if (role.equals("Admin")) {
             System.out.println("Sending email to admin");
-            toEmail = "librarymstacniz@gmail.com";  // Change this to your desired email
+            message.setText(String.format("Click the following link to verify %s as admin of LMS: %s", toEmail, link));
+            message.setSubject("Library Account Verification");
+            toEmail = "librarymstacniz@gmail.com";  // Change this to when you want to send to super admin
         }
-        message.setTo(toEmail);
-        message.setSubject("Library Account Verification");
-        message.setText("Click the following link to verify your email: " + link);
+        else {
+            System.out.println("Sending email to user");
+            message.setText("Click the following link to verify your email in LMS: " + link);
+            message.setSubject("Library Account Verification");
+        }
+        message.setTo(toEmail);        
 
         mailSender.send(message);
     }
@@ -50,5 +55,16 @@ public class EmailService {
             return false;
         }
         return true;
+    }
+
+    public void AdminVerified(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Admin Permission Approvel");
+        message.setText("Your email has been verified by the Super Admin.");
+        System.out.println("Message: " + message.getText());
+
+        mailSender.send(message);
+     
     }
 }
