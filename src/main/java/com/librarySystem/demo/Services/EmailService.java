@@ -65,6 +65,15 @@ public class EmailService {
         System.out.println("Message: " + message.getText());
 
         mailSender.send(message);
-     
+    }
+
+    public void sendVerificationEmail(String message , String toEmail) {
+        SimpleMailMessage emailMessage = new SimpleMailMessage();
+        emailMessage.setTo(toEmail);
+        emailMessage.setSubject("LMS Password Change Notification");
+        emailMessage.setText(message);
+
+        mailSender.send(emailMessage);
+
     }
 }
