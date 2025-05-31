@@ -21,13 +21,22 @@ public class EmailService {
     private UserRepository userRepository;
     
 
-    public void sendVerificationEmail(String toEmail, String token) {
+    public void sendVerificationEmail(String toEmail, String token, String role) {
         String link = "http://localhost:8080/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("Library Account Verification");
-        message.setText("Click the following link to verify your email: " + link);
+        if (role.equals("Admin")) {
+            System.out.println("Sending email to admin");
+            message.setText(String.format("Click the following link to verify %s as admin of LMS: %s", toEmail, link));
+            message.setSubject("Library Account Verification");
+            toEmail = "librarymstacniz@gmail.com";  // Change this to when you want to send to super admin
+        }
+        else {
+            System.out.println("Sending email to user");
+            message.setText("Click the following link to verify your email in LMS: " + link);
+            message.setSubject("Library Account Verification");
+        }
+        message.setTo(toEmail);        
 
         mailSender.send(message);
     }
@@ -46,5 +55,25 @@ public class EmailService {
             return false;
         }
         return true;
+    }
+
+    public void AdminVerified(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Admin Permission Approvel");
+        message.setText("Your email has been verified by the Super Admin.");
+        System.out.println("Message: " + message.getText());
+
+        mailSender.send(message);
+    }
+
+    public void sendVerificationEmail(String message , String toEmail) {
+        SimpleMailMessage emailMessage = new SimpleMailMessage();
+        emailMessage.setTo(toEmail);
+        emailMessage.setSubject("LMS Password Change Notification");
+        emailMessage.setText(message);
+
+        mailSender.send(emailMessage);
+
     }
 }

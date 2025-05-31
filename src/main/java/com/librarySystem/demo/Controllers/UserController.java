@@ -105,9 +105,9 @@ public class UserController {
         newUser.setVerified(false); // Mark as unverified
 
         // Send verification email
-        emailService.sendVerificationEmail(email, verificationToken);
+        emailService.sendVerificationEmail(email, verificationToken, role);
+        System.out.println("Email sent with token");
         userRepository.save(newUser);
-        System.out.println("User registered: " + newUser.getEmail());
         // Response
         AuthResponse response = new AuthResponse();
         response.setStatus(true);
@@ -126,6 +126,11 @@ public class UserController {
         user.setVerified(true);
         user.setVerificationToken(null); // Clear token after use
         userRepository.save(user);
+        // Send email to admin if main admin is verified as an admin
+        if (user.getRole().equals("Admin")) {
+            System.out.println("Super Admin verified email sent to admin.");
+            emailService.AdminVerified(user.getEmail());
+        }
         return new ResponseEntity<>("Email verified successfully!", HttpStatus.OK);
     }
 
@@ -153,5 +158,6 @@ public class UserController {
         return new UsernamePasswordAuthenticationToken(userDetails, access, userDetails.getAuthorities());
 
     }
+    
 
 }
