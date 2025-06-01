@@ -52,7 +52,7 @@ public class PasswordController {
         response.setStatus(true);
         response.setMessage("Password changed successfully.");
         emailService.sendVerificationEmail(response.getMessage(), email);
-
+        System.out.println("Password change process completed successfully for email: " + email);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

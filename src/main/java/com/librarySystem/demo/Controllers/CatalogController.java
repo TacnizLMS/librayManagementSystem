@@ -43,7 +43,8 @@ public class CatalogController {
 
     // Delete catalog
     @DeleteMapping("/delete/{id}")
-    public void deleteCatalog(@PathVariable String id) {
+    public String deleteCatalog(@PathVariable String id) {
         catalogService.deleteCatalog(id);
+        return "Catalog removed successfully";
     }
 }
