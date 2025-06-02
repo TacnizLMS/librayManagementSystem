@@ -134,6 +134,20 @@ public class UserController {
         return new ResponseEntity<>("Email verified successfully!", HttpStatus.OK);
     }
 
+    @GetMapping("/get-user")
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return new ResponseEntity<>("User not found with email: " + email, HttpStatus.NOT_FOUND);
+        }
+
+        // Exclude sensitive info like password and verification token
+        user.setPassword(null);
+        user.setVerificationToken(null);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     private Authentication authenticate(String username, String password) {
 
         // System.out.println("Email: "+username);
@@ -143,7 +157,7 @@ public class UserController {
             System.out.println("Sign in details - null" + userDetails);
             throw new BadCredentialsException("Invalid username and password");
         }
-        
+
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             System.out.println("Sign in userDetails - password mismatch" + userDetails);
             throw new BadCredentialsException("Invalid password");
@@ -158,6 +172,5 @@ public class UserController {
         return new UsernamePasswordAuthenticationToken(userDetails, access, userDetails.getAuthorities());
 
     }
-    
 
 }
