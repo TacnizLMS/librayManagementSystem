@@ -28,6 +28,12 @@ public class CatalogController {
         return catalogService.getCatalogById(id);
     }
 
+    // Get catalog by user id
+    @GetMapping("/user/{userId}")
+    public List<Catalog> getCatalogByUserId(@PathVariable String userId) {
+        return catalogService.getAllCatalogByUserId(userId);
+    }
+
 
     // Add catalog
     @PostMapping("/add")
