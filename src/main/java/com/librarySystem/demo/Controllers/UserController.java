@@ -1,6 +1,7 @@
 package com.librarySystem.demo.Controllers;
 
 import java.lang.reflect.Array;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,48 @@ public class UserController {
         return new ResponseEntity<>("Email verified successfully!", HttpStatus.OK);
     }
 
+    // Create a new user by admin
+    @PostMapping("/create-user-by-admin")
+    public ResponseEntity<AuthResponse> createUserByAdmin(@RequestBody User user) {
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String fullName = user.getFullName();
+        String mobile = user.getMobile();
+        String role = user.getRole();
+
+        // Check if email already exists
+        if (userRepository.findByEmail(email) != null) {
+            AuthResponse conflictResponse = new AuthResponse();
+            conflictResponse.setStatus(false);
+            conflictResponse.setMessage("Email already registered.");
+            return new ResponseEntity<>(conflictResponse, HttpStatus.CONFLICT);
+        }
+
+        // Generate verification token
+        String verificationToken = UUID.randomUUID().toString();
+
+        // Create and save user
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setFullName(fullName);
+        newUser.setMobile(mobile);
+        newUser.setRole(role);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setVerificationToken(verificationToken);
+        newUser.setVerified(false); // Mark as unverified
+
+        // Send verification email
+        emailService.sendVerificationEmail(email, verificationToken, role);
+        System.out.println("Email sent with token");
+        userRepository.save(newUser);
+        // Response
+        AuthResponse response = new AuthResponse();
+        response.setStatus(true);
+        response.setMessage("Registration successful! Please verify your email.");
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping("/get-user")
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         User user = userRepository.findByEmail(email);
@@ -171,6 +214,12 @@ public class UserController {
 
         return new UsernamePasswordAuthenticationToken(userDetails, access, userDetails.getAuthorities());
 
+    }
+
+    // get all users
+    @GetMapping("/users/all")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
 }

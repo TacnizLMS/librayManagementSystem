@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 import com.librarySystem.demo.Models.Catalog;
 import com.librarySystem.demo.Repository.CatalogRepository;
 
-
-
-
 @Service
 public class CatalogService {
     @Autowired
@@ -22,12 +19,16 @@ public class CatalogService {
     public Optional<Catalog> getCatalogById(String id) {
         return catalogRepository.findById(id);
     }
-    
+
+    public List<Catalog> getAllCatalogByUserId(String userId) {
+        return catalogRepository.findByUserId(userId);
+    }
+
     public Catalog addCatalog(Catalog catalog) {
         return catalogRepository.save(catalog);
-        }
+    }
 
-        public Catalog updateCatalog(String id, Catalog catalogDetails) {
+    public Catalog updateCatalog(String id, Catalog catalogDetails) {
         return catalogRepository.findById(id).map(catalog -> {
             catalog.setUserId(catalogDetails.getUserId());
             catalog.setBookIds(catalogDetails.getBookIds());
@@ -36,9 +37,9 @@ public class CatalogService {
             catalog.setExpiredDate(catalogDetails.getExpiredDate());
             return catalogRepository.save(catalog);
         }).orElseThrow(() -> new RuntimeException("Catalog not found"));
-        }
+    }
 
-        public void deleteCatalog(String id) {
+    public void deleteCatalog(String id) {
         catalogRepository.deleteById(id);
     }
 }
