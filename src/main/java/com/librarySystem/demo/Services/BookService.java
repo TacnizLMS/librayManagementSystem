@@ -51,6 +51,9 @@ public class BookService {
             if (bookDetails.getAuthor() != null) {
                 book.setAuthor(bookDetails.getAuthor());
             }
+            if (bookDetails.getType() != null) {
+                book.setType(bookDetails.getType());
+            }
             if (bookDetails.getAvailability() != false) {
                 book.setAvailability(bookDetails.getAvailability());
             }

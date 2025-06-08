@@ -25,6 +25,7 @@ public class CatalogService {
     }
 
     public Catalog addCatalog(Catalog catalog) {
+        
         return catalogRepository.save(catalog);
     }
 
