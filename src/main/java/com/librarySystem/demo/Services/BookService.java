@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.librarySystem.demo.Exception.AlreadyExistsException;
 import com.librarySystem.demo.Models.Book;
 import com.librarySystem.demo.Repository.BookRepository;
 
@@ -27,11 +30,9 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
-        //check if the book already exists by title
         Optional<Book> existingBook = bookRepository.findByTitle(book.getTitle());
         if (existingBook.isPresent()) {
-            // If the book exists return as message
-            throw new RuntimeException("Book with title '" + book.getTitle() + "' already exists.");      
+           throw new AlreadyExistsException("Book with title '" + book.getTitle() + "' already exists.");
         }
         return bookRepository.save(book);
     }
@@ -61,4 +62,5 @@ public class BookService {
     public void deleteBook(String id) {
         bookRepository.deleteById(id);
     }
+
 }
