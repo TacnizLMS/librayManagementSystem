@@ -11,7 +11,7 @@ public class Catalog {
     @Id
     private String id;
     private String userId;
-    private List<String> bookIds;
+    private List<BookStationary> bookStationaries;
     private int quantity;
     private Date borrowDate;
     private Date expiredDate;
@@ -22,8 +22,8 @@ public class Catalog {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    public List<String> getBookIds() { return bookIds; }
-    public void setBookIds(List<String> bookIds) { this.bookIds = bookIds; }
+    public List<BookStationary> getBookStationaries() { return bookStationaries; }
+    public void setBookStationaries(List<BookStationary> bookStationaries) { this.bookStationaries = bookStationaries; }
 
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
@@ -33,4 +33,20 @@ public class Catalog {
 
     public Date getExpiredDate() { return expiredDate; }
     public void setExpiredDate(Date expiredDate) { this.expiredDate = expiredDate; }
+
+    // Inner class for BookStationary
+    public static class BookStationary {
+        private String bookId;
+        private String bookName;
+        private int bookEachQuantity;
+
+        public String getBookId() { return bookId; }
+        public void setBookId(String bookId) { this.bookId = bookId; }
+
+        public String getBookName() { return bookName; }
+        public void setBookName(String bookName) { this.bookName = bookName; }
+
+        public int getBookEachQuantity() { return bookEachQuantity; }
+        public void setBookEachQuantity(int bookEachQuantity) { this.bookEachQuantity = bookEachQuantity; }
+    }
 }

@@ -31,7 +31,7 @@ public class CatalogService {
     public Catalog updateCatalog(String id, Catalog catalogDetails) {
         return catalogRepository.findById(id).map(catalog -> {
             catalog.setUserId(catalogDetails.getUserId());
-            catalog.setBookIds(catalogDetails.getBookIds());
+            catalog.setBookStationaries(catalogDetails.getBookStationaries());
             catalog.setQuantity(catalogDetails.getQuantity());
             catalog.setBorrowDate(catalogDetails.getBorrowDate());
             catalog.setExpiredDate(catalogDetails.getExpiredDate());

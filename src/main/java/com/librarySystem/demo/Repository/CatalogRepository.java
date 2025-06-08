@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CatalogRepository extends MongoRepository<Catalog, String> {
-    public abstract List<Catalog> findByBookIds(String bookId);
 
     public abstract List<Catalog> findByUserId(String userId);
 
