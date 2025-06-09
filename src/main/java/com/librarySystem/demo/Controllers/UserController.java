@@ -83,6 +83,8 @@ public class UserController {
         String fullName = user.getFullName();
         String mobile = user.getMobile();
         String role = user.getRole();
+        String registeredDate = java.time.LocalDateTime.now().toString();
+        double fine = 0.0;
 
         // Check if email already exists
         if (userRepository.findByEmail(email) != null) {
@@ -101,6 +103,8 @@ public class UserController {
         newUser.setFullName(fullName);
         newUser.setMobile(mobile);
         newUser.setRole(role);
+        newUser.setRegisteredDate(registeredDate);
+        newUser.setFine(fine);
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setVerificationToken(verificationToken);
         newUser.setVerified(false); // Mark as unverified
@@ -143,6 +147,8 @@ public class UserController {
         String fullName = user.getFullName();
         String mobile = user.getMobile();
         String role = user.getRole();
+        String registeredDate = java.time.LocalDateTime.now().toString();
+        double fine = 0.0;
 
         // Check if email already exists
         if (userRepository.findByEmail(email) != null) {
@@ -161,6 +167,8 @@ public class UserController {
         newUser.setFullName(fullName);
         newUser.setMobile(mobile);
         newUser.setRole(role);
+        newUser.setRegisteredDate(registeredDate);
+        newUser.setFine(fine);
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setVerificationToken(verificationToken);
         newUser.setVerified(false); // Mark as unverified
