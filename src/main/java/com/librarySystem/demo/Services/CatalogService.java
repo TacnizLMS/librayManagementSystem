@@ -59,6 +59,8 @@ public class CatalogService {
                 CatalogBook catalogBook = new CatalogBook();
                 catalogBook.setId(UUID.randomUUID().toString());
                 catalogBook.setBook(book);
+                catalogBook.setFine(0.0);
+                catalogBook.setFinePaid(false);
                 catalogBook.setReturnState(false);
                 catalogBooks.add(catalogBook);
             }
@@ -92,6 +94,14 @@ public class CatalogService {
             if (Boolean.TRUE.equals(request.isCompleteState())) {
 
                 for (CatalogBook cb : catalogBooks) {
+                    //calculate fine charge
+                    if (!cb.isReturnState()) {
+                        long diffInMillies = Math.abs(new Date().getTime() - catalog.getExpiredDate().getTime());
+                        long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
+                        if (diffInDays > 0) {
+                            cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
+                        }
+                    }
                     cb.setReturnState(true);
                 }
                 catalog.setCompleteState(true);
@@ -106,6 +116,14 @@ public class CatalogService {
                         if (!cb.isReturnState() &&
                                 cb.getBook().getId().equals(bookRequest.getBookId()) &&
                                 quantityToUpdate > 0) {
+                            // Calculate fine charge if not already returned
+                            if (cb.getFine() == 0.0) {
+                                long diffInMillies = Math.abs(new Date().getTime() - catalog.getExpiredDate().getTime());
+                                long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
+                                if (diffInDays > 0) {
+                                    cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
+                                }
+                            }
                             cb.setReturnState(true);
                             quantityToUpdate--;
                         }
@@ -121,6 +139,38 @@ public class CatalogService {
         }).orElseThrow(() -> new RuntimeException("Catalog not found"));
     }
 
+    public Catalog payCatalogFine(String CatalogId){
+        // get all catalogbooks and mark as pay fine by getCatalogBooks
+        Catalog catalog = catalogRepository.findById(CatalogId)
+                .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + CatalogId));
+        List<CatalogBook> catalogBooks = catalog.getCatalogBooks();
+        for (CatalogBook cb : catalogBooks) {
+            if (!cb.isFinePaid() && cb.getFine() > 0) {
+                cb.setFinePaid(true);
+            }
+        }
+        catalog.setCatalogBooks(catalogBooks);
+        return catalogRepository.save(catalog);
+    }
+    
+    public Catalog payCatalogBookFine(String catalogId , String catalogBookId) {
+        // get catalog by id
+        Catalog catalog = catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + catalogId));
+        // get catalog book by id
+        CatalogBook catalogBook = catalog.getCatalogBooks().stream()
+                .filter(cb -> cb.getId().equals(catalogBookId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("CatalogBook not found with id: " + catalogBookId));
+
+        // mark as pay fine
+        if (!catalogBook.isFinePaid() && catalogBook.getFine() > 0) {
+            catalogBook.setFinePaid(true);
+        }
+
+        return catalogRepository.save(catalog);
+    } 
+  
     public void deleteCatalog(String id) {
         catalogRepository.deleteById(id);
     }

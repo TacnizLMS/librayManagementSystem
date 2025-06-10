@@ -4,6 +4,8 @@ public class CatalogBook {
 
     private String id;
     private Book book;
+    private double fine;
+    private boolean finePaid;
     private boolean returnState;
 
     public String getId() {
@@ -17,6 +19,18 @@ public class CatalogBook {
     }
     public void setBook(Book book) {
         this.book = book;
+    }
+    public double getFine() {
+        return fine;
+    }
+    public void setFine(double fine) {
+        this.fine = fine;
+    }
+    public boolean isFinePaid() {
+        return finePaid;
+    }
+    public void setFinePaid(boolean finePaid) {
+        this.finePaid = finePaid;
     }
     public boolean isReturnState() {
         return returnState;

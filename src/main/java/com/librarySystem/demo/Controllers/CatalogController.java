@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.librarySystem.demo.Dto.CatalogRequestDTO;
+import com.librarySystem.demo.Dto.FinePayBookIdDTO;
+import com.librarySystem.demo.Models.Book;
 import com.librarySystem.demo.Models.Catalog;
 import com.librarySystem.demo.Services.CatalogService;
 
@@ -35,7 +37,6 @@ public class CatalogController {
         return catalogService.getAllCatalogByUserId(userId);
     }
 
-
     // Add catalog
     @PostMapping("/add")
     public Catalog addCatalog(@RequestBody CatalogRequestDTO catalog) {
@@ -46,6 +47,16 @@ public class CatalogController {
     @PutMapping("/update/{id}")
     public Catalog updateCatalog(@PathVariable String id, @RequestBody CatalogRequestDTO catalogDetails) {
         return catalogService.updateCatalog(id, catalogDetails);
+    }
+
+    @PutMapping("/pay-catalog-fine/{id}")
+    public Catalog payCatalogFine(@PathVariable String id) {
+        return catalogService.payCatalogFine(id);
+    }
+
+    @PutMapping("/pay-catalog-book-fine/{id}")
+    public Catalog payCatalogBookFine(@PathVariable String id, @RequestBody FinePayBookIdDTO request) {
+        return catalogService.payCatalogBookFine(id, request.getCatalogBookId());
     }
 
     // Delete catalog
