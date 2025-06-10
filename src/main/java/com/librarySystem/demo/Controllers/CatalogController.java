@@ -49,11 +49,13 @@ public class CatalogController {
         return catalogService.updateCatalog(id, catalogDetails);
     }
 
+    //pay full catalog fine
     @PutMapping("/pay-catalog-fine/{id}")
     public Catalog payCatalogFine(@PathVariable String id) {
         return catalogService.payCatalogFine(id);
     }
 
+    // Pay single catalog book fine
     @PutMapping("/pay-catalog-book-fine/{id}")
     public Catalog payCatalogBookFine(@PathVariable String id, @RequestBody FinePayBookIdDTO request) {
         return catalogService.payCatalogBookFine(id, request.getCatalogBookId());
@@ -65,4 +67,5 @@ public class CatalogController {
         catalogService.deleteCatalog(id);
         return "Catalog removed successfully";
     }
+
 }
