@@ -174,4 +174,19 @@ public class CatalogService {
     public void deleteCatalog(String id) {
         catalogRepository.deleteById(id);
     }
+
+    public double getFinesByUserId(String userId) {
+        List<Catalog> catalogs = catalogRepository.findByUserId(userId);
+        double totalFine = 0.0;
+
+        for (Catalog catalog : catalogs) {
+            for (CatalogBook catalogBook : catalog.getCatalogBooks()) {
+                if (!catalogBook.isFinePaid() && catalogBook.getFine() > 0) {
+                    totalFine += catalogBook.getFine();
+                }
+            }
+        }
+
+        return totalFine;
+    }
 }
