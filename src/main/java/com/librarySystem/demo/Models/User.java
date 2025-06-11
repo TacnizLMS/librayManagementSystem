@@ -23,6 +23,7 @@ public class User {
     private String password;
     private String role;
     private String mobile;
+    private String registeredDate;
     private boolean isVerified = false;
     private String verificationToken;
 
@@ -67,6 +68,12 @@ public class User {
     }
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+    public String getRegisteredDate() {
+        return registeredDate;
+    }
+    public void setRegisteredDate(String registeredDate) {
+        this.registeredDate = registeredDate;
     }
     public boolean isVerified() {
         return isVerified;

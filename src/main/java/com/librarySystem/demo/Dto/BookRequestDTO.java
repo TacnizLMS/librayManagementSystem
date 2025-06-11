@@ -1,27 +1,16 @@
-package com.librarySystem.demo.Models;
+package com.librarySystem.demo.Dto;
+ // <- your actual package
 
-
-
-public class Book {
-    private String id;
+public class BookRequestDTO {
     private String title;
     private String author;
-    private Type type;
+    private String typeId;
     private int quantity;
     private boolean availability;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -29,33 +18,29 @@ public class Book {
     public String getAuthor() {
         return author;
     }
-
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    public Type getType() {
-        return type;
+    public String getTypeId() {
+        return typeId;
     }
-
-    public void setType(Type type) {
-        this.type = type;
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
     }
 
     public int getQuantity() {
         return quantity;
     }
-
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public boolean getAvailability() {
+    public boolean isAvailability() {
         return availability;
     }
-
     public void setAvailability(boolean availability) {
         this.availability = availability;
     }
-
 }
+

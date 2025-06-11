@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.librarySystem.demo.Dto.BookRequestDTO;
 import com.librarySystem.demo.Models.Book;
 import com.librarySystem.demo.Services.BookService;
 
@@ -32,16 +33,21 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
+    @GetMapping("/search/{title}")
+    public Optional<Book> getBookByName(@PathVariable String title) {
+        return bookService.getBookByName(title);
+    }
+
     @PostMapping
-    public Book addBook(@RequestBody Book book) {
-        Book addedBook = bookService.addBook(book);
+    public Book addBook(@RequestBody BookRequestDTO dto) {
+        Book addedBook = bookService.addBookFromDTO(dto);
         System.out.println("Book added successfully");
         return addedBook;
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable String id, @RequestBody Book book) {
-        return bookService.updateBook(id, book);
+    public Book updateBook(@PathVariable String id, @RequestBody BookRequestDTO bookDetails) {
+        return bookService.updateBook(id, bookDetails);
     }
 
     @DeleteMapping("/{id}")
