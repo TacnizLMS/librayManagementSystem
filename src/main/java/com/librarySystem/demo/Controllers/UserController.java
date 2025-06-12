@@ -160,11 +160,15 @@ public class UserController {
             return new ResponseEntity<>(conflictResponse, HttpStatus.CONFLICT);
         }
 
+         // Generate 7-character ID
+        String shortId = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+                NanoIdUtils.DEFAULT_ALPHABET, 7);
         // Generate verification token
         String verificationToken = UUID.randomUUID().toString();
 
         // Create and save user
         User newUser = new User();
+        newUser.setId(shortId);
         newUser.setEmail(email);
         newUser.setFullName(fullName);
         newUser.setMobile(mobile);
