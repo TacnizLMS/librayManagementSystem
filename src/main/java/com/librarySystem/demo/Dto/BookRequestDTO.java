@@ -6,6 +6,7 @@ public class BookRequestDTO {
     private String author;
     private String typeId;
     private int quantity;
+    private String language;
     private boolean availability;
 
     public String getTitle() {
@@ -34,6 +35,14 @@ public class BookRequestDTO {
     }
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public boolean isAvailability() {
