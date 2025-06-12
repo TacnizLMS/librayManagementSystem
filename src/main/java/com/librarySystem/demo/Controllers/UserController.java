@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.librarySystem.demo.Models.User;
 import com.librarySystem.demo.Repository.UserRepository;
 import com.librarySystem.demo.SecurityConfig.JwtProvider;
@@ -93,11 +94,15 @@ public class UserController {
             return new ResponseEntity<>(conflictResponse, HttpStatus.CONFLICT);
         }
 
+        // Generate 7-character ID
+        String shortId = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+                NanoIdUtils.DEFAULT_ALPHABET, 7);
         // Generate verification token
         String verificationToken = UUID.randomUUID().toString();
 
         // Create and save user
         User newUser = new User();
+        newUser.setId(shortId);
         newUser.setEmail(email);
         newUser.setFullName(fullName);
         newUser.setMobile(mobile);
