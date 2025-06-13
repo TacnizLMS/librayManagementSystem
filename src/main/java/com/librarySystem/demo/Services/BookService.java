@@ -48,8 +48,9 @@ public class BookService {
         book.setTitle(dto.getTitle());
         book.setAuthor(dto.getAuthor());
         book.setType(type);
+        book.setLanguage(dto.getLanguage());
         book.setQuantity(dto.getQuantity());
-        book.setAvailability(dto.isAvailability());
+        book.setAvailability(true);
 
         return bookRepository.save(book);
     }
@@ -76,7 +77,10 @@ public class BookService {
                         .orElseThrow(() -> new NotFoundException("Type not found with id: " + bookDetails.getTypeId()));
                 book.setType(type);
             }
-
+            // Language
+            if (bookDetails.getLanguage() != null) {
+                book.setLanguage(bookDetails.getLanguage());
+            }
             // Availability
             book.setAvailability(bookDetails.isAvailability());
 

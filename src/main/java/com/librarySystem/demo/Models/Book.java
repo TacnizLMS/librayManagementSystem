@@ -8,6 +8,7 @@ public class Book {
     private String author;
     private Type type;
     private int quantity;
+    private String language;
     private boolean availability;
 
     public String getId() {
@@ -50,6 +51,14 @@ public class Book {
         this.quantity = quantity;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    
     public boolean getAvailability() {
         return availability;
     }
