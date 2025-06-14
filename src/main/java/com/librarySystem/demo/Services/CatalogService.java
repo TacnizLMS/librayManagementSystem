@@ -96,7 +96,7 @@ public class CatalogService {
                 for (CatalogBook cb : catalogBooks) {
                     //calculate fine charge
                     if (!cb.isReturnState()) {
-                        long diffInMillies = Math.abs(new Date().getTime() - catalog.getExpiredDate().getTime());
+                        long diffInMillies = new Date().getTime() - catalog.getExpiredDate().getTime();
                         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
                         if (diffInDays > 0) {
                             cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
