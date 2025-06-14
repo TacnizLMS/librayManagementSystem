@@ -118,7 +118,7 @@ public class CatalogService {
                                 quantityToUpdate > 0) {
                             // Calculate fine charge if not already returned
                             if (cb.getFine() == 0.0) {
-                                long diffInMillies = Math.abs(new Date().getTime() - catalog.getExpiredDate().getTime());
+                                long diffInMillies = new Date().getTime() - catalog.getExpiredDate().getTime();
                                 long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
                                 if (diffInDays > 0) {
                                     cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
