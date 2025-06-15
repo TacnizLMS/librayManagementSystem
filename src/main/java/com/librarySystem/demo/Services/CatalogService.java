@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import com.librarySystem.demo.Dto.CatalogBookDTO;
 import com.librarySystem.demo.Dto.CatalogRequestDTO;
+import com.librarySystem.demo.Dto.FinePayBookIdDTO;
 import com.librarySystem.demo.Exception.AlreadyExistsException;
+import com.librarySystem.demo.Exception.BadRequestException;
 import com.librarySystem.demo.Exception.NotFoundException;
 import com.librarySystem.demo.Models.Book;
 import com.librarySystem.demo.Models.Catalog;
@@ -105,7 +107,7 @@ public class CatalogService {
                         long diffInMillies = new Date().getTime() - catalog.getExpiredDate().getTime();
                         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
                         if (diffInDays > 0) {
-                            cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
+                            cb.setFine(cb.getFine() + (diffInDays * 20)); // Assuming a fine of 5 per day
                         }
                     }
                     cb.setReturnState(true);
@@ -142,10 +144,58 @@ public class CatalogService {
                 if (allReturned) {
                     catalog.setCompleteState("complete");
                 }
+            } else if ("pending".equals(catalog.getCompleteState())) {
+                throw new BadRequestException("Catalog with id " + id + " is not in borrow state.");
             }
 
             return catalogRepository.save(catalog);
         }).orElseThrow(() -> new RuntimeException("Catalog not found"));
+    }
+
+    public Catalog returnBackCatalog(String id) {
+        return catalogRepository.findById(id).map(catalog -> {
+            // check allready returned
+            if ("complete".equals(catalog.getCompleteState())) {
+                // mark as return back
+                catalog.setCompleteState("borrow");
+                for (CatalogBook cb : catalog.getCatalogBooks()) {
+                    cb.setReturnState(false);
+                    cb.setFine(0.0);
+                }
+            }
+            return catalogRepository.save(catalog);
+        }).orElseThrow(() -> new NotFoundException("Catalog not found with id: " + id));
+    }
+
+    public Catalog returnBackCatalogBook(String catalogId, FinePayBookIdDTO request) {
+        String catalogBookId = request.getCatalogBookId();
+
+        // Fetch the catalog by ID
+        Catalog catalog = catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + catalogId));
+
+        // Find the catalogBook inside the catalog
+        CatalogBook catalogBook = catalog.getCatalogBooks().stream()
+                .filter(cb -> cb.getId().equals(catalogBookId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("CatalogBook not found with id: " + catalogBookId));
+
+        // If already returned, revert
+        if (catalogBook.isReturnState()) {
+            System.out.println("Reverting return for CatalogBook with id: " + catalogBookId);
+            catalogBook.setReturnState(false);
+            catalogBook.setFine(0.0);
+
+            // If the catalog was marked complete, revert it
+            if ("complete".equals(catalog.getCompleteState())) {
+                catalog.setCompleteState("borrow");
+            }
+        } else {
+            System.out.println("CatalogBook with id: " + catalogBookId + " is not in return state.");
+            throw new BadRequestException("CatalogBook with id " + catalogBookId + " is not in return state.");
+        }
+
+        return catalogRepository.save(catalog);
     }
 
     public Catalog payCatalogFine(String CatalogId) {
