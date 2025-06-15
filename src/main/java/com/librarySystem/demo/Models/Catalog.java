@@ -15,7 +15,7 @@ public class Catalog {
     private int quantity;
     private Date borrowDate;
     private Date expiredDate;
-    private boolean completeState;
+    private String completeState;// pending borrow complete
 
     public String getId() {
         return id;
@@ -65,11 +65,11 @@ public class Catalog {
         this.expiredDate = expiredDate;
     }
 
-    public boolean isCompleteState() {
+    public String getCompleteState() {
         return completeState;
     }
 
-    public void setCompleteState(boolean completeState) {
+    public void setCompleteState(String completeState) {
         this.completeState = completeState;
     }
 
