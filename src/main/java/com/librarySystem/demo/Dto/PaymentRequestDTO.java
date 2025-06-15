@@ -2,19 +2,19 @@ package com.librarySystem.demo.Dto;
 
 public class PaymentRequestDTO {
     private String productName;
-    private Long amount;
+    private Double amount;
     private String description;
 
-    // constructors, getters, and setters...
-    public PaymentRequestDTO() {
-    }
+    // Constructors
+    public PaymentRequestDTO() {}
 
-    public PaymentRequestDTO(String productName, Long amount, String description) {
+    public PaymentRequestDTO(String productName, Double amount, String description) {
         this.productName = productName;
         this.amount = amount;
         this.description = description;
     }
 
+    // Getters and Setters
     public String getProductName() {
         return productName;
     }
@@ -23,11 +23,11 @@ public class PaymentRequestDTO {
         this.productName = productName;
     }
 
-    public Long getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
