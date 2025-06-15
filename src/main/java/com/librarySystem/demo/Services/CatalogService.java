@@ -70,15 +70,11 @@ public class CatalogService {
 
         catalog.setCatalogBooks(catalogBooks);
         catalog.setQuantity(totalQuantity);
-        catalog.setBorrowDate(new Date());
+        catalog.setBorrowDate(null);
 
-        // Example: set expiredDate to 14 days from now
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(catalog.getBorrowDate());
-        cal.add(Calendar.DAY_OF_MONTH, 14);
-        catalog.setExpiredDate(cal.getTime());
+        catalog.setExpiredDate(null);
 
-        catalog.setCompleteState(false);
+        catalog.setCompleteState("pending"); // pending borrow complete
 
         return catalogRepository.save(catalog);
     }
@@ -87,14 +83,24 @@ public class CatalogService {
         return catalogRepository.findById(id).map(catalog -> {
             List<CatalogBook> catalogBooks = catalog.getCatalogBooks();
             // check allready returned
-            if (catalog.isCompleteState()) {
+            if ("complete".equals(catalog.getCompleteState())) {
                 throw new AlreadyExistsException("Catalog with id " + id + " is already returned.");
             }
-            // Case 1: If completeState is true, mark all as returned
-            if (Boolean.TRUE.equals(request.isCompleteState())) {
+            if ("borrow".equals(request.getCompleteState())) {
+                catalog.setBorrowDate(new Date());
+                // Example: set expiredDate to 14 days from now
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(catalog.getBorrowDate());
+                cal.add(Calendar.DAY_OF_MONTH, 14);
+                catalog.setExpiredDate(cal.getTime());
 
+                catalog.setCompleteState("borrow"); // pending borrow complete
+
+            }
+            // Case 1: If completeState is true, mark all as returned
+            if ("complete".equals(request.getCompleteState())) {
                 for (CatalogBook cb : catalogBooks) {
-                    //calculate fine charge
+                    // calculate fine charge
                     if (!cb.isReturnState()) {
                         long diffInMillies = new Date().getTime() - catalog.getExpiredDate().getTime();
                         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
@@ -104,11 +110,12 @@ public class CatalogService {
                     }
                     cb.setReturnState(true);
                 }
-                catalog.setCompleteState(true);
+                catalog.setCompleteState("complete");
             }
 
             // Case 2: Update only selected books
-            if (request.getBooks() != null && !request.getBooks().isEmpty()) {
+            if ("borrow".equals(catalog.getCompleteState()) && request.getBooks() != null) {
+                System.out.println("Updating catalog with id: ");
                 for (CatalogBookDTO bookRequest : request.getBooks()) {
                     int quantityToUpdate = bookRequest.getQuantity();
 
@@ -118,7 +125,7 @@ public class CatalogService {
                                 quantityToUpdate > 0) {
                             // Calculate fine charge if not already returned
                             if (cb.getFine() == 0.0) {
-                                long diffInMillies = Math.abs(new Date().getTime() - catalog.getExpiredDate().getTime());
+                                long diffInMillies = new Date().getTime() - catalog.getExpiredDate().getTime();
                                 long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
                                 if (diffInDays > 0) {
                                     cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
@@ -132,14 +139,16 @@ public class CatalogService {
 
                 // If all catalog books are returned, mark completeState true
                 boolean allReturned = catalogBooks.stream().allMatch(CatalogBook::isReturnState);
-                catalog.setCompleteState(allReturned);
+                if (allReturned) {
+                    catalog.setCompleteState("complete");
+                }
             }
 
             return catalogRepository.save(catalog);
         }).orElseThrow(() -> new RuntimeException("Catalog not found"));
     }
 
-    public Catalog payCatalogFine(String CatalogId){
+    public Catalog payCatalogFine(String CatalogId) {
         // get all catalogbooks and mark as pay fine by getCatalogBooks
         Catalog catalog = catalogRepository.findById(CatalogId)
                 .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + CatalogId));
@@ -152,8 +161,8 @@ public class CatalogService {
         catalog.setCatalogBooks(catalogBooks);
         return catalogRepository.save(catalog);
     }
-    
-    public Catalog payCatalogBookFine(String catalogId , String catalogBookId) {
+
+    public Catalog payCatalogBookFine(String catalogId, String catalogBookId) {
         // get catalog by id
         Catalog catalog = catalogRepository.findById(catalogId)
                 .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + catalogId));
@@ -169,8 +178,8 @@ public class CatalogService {
         }
 
         return catalogRepository.save(catalog);
-    } 
-  
+    }
+
     public void deleteCatalog(String id) {
         catalogRepository.deleteById(id);
     }
