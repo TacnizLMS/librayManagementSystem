@@ -1,3 +1,4 @@
+// PaymentService.java
 package com.librarySystem.demo.Services;
 
 import com.stripe.Stripe;
@@ -13,8 +14,17 @@ public class PaymentService {
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    public String createCheckoutSession() throws Exception {
+    public String createCheckoutSession(String productName, Long amount, String description) throws Exception {
         Stripe.apiKey = stripeSecretKey;
+
+        SessionCreateParams.LineItem.PriceData.ProductData.Builder productDataBuilder = 
+            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                .setName(productName);
+        
+        // Add description if provided
+        if (description != null && !description.trim().isEmpty()) {
+            productDataBuilder.setDescription(description);
+        }
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -25,12 +35,9 @@ public class PaymentService {
                                 .setQuantity(1L)
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("usd")
-                                                .setUnitAmount(1000L)
-                                                .setProductData(
-                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                .setName("Test Product")
-                                                                .build())
+                                                .setCurrency("lkr")  // Changed to LKR
+                                                .setUnitAmount(amount)  // Dynamic amount
+                                                .setProductData(productDataBuilder.build())
                                                 .build())
                                 .build())
                 .build();
