@@ -5,7 +5,7 @@ import java.util.List;
 public class CatalogRequestDTO {
     private String userId;
     private List<CatalogBookDTO> books;
-    private boolean completeState;
+    private String completeState;// pending borrow complete
 
     public String getUserId() {
         return userId;
@@ -19,10 +19,10 @@ public class CatalogRequestDTO {
     public void setBooks(List<CatalogBookDTO> books) {
         this.books = books;
     }
-    public boolean isCompleteState() {
+    public String getCompleteState() {
         return completeState;
     }
-    public void setCompleteState(boolean completeState) {
+    public void setCompleteState(String completeState) {
         this.completeState = completeState;
     }
 

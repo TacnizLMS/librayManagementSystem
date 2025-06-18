@@ -49,6 +49,18 @@ public class CatalogController {
         return catalogService.updateCatalog(id, catalogDetails);
     }
 
+    // ruturn back when return by mistake
+    @PutMapping("/return-back/{id}")
+    public Catalog returnBackCatalog(@PathVariable String id) {
+        return catalogService.returnBackCatalog(id);
+    }
+
+    // return back when return by mistake with book id
+    @PutMapping("/return-back-book/{catalogId}")
+    public Catalog returnBackCatalogBook(@PathVariable String catalogId, @RequestBody FinePayBookIdDTO request) {
+        return catalogService.returnBackCatalogBook(catalogId, request);
+    }
+
     //pay full catalog fine
     @PutMapping("/pay-catalog-fine/{id}")
     public Catalog payCatalogFine(@PathVariable String id) {
