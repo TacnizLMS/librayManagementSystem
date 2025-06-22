@@ -185,6 +185,13 @@ public class CatalogService {
                 for (CatalogBook cb : catalog.getCatalogBooks()) {
                     cb.setReturnState(false);
                     cb.setFine(0.0);
+                    // get book id
+                    String bookId = cb.getBook().getId();
+                    // get book by id and update available count
+                    Book updatedBook = bookRepository.findById(bookId)
+                            .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookId));
+                    updatedBook.setAvailableCount(updatedBook.getAvailableCount() - 1);
+                    bookRepository.save(updatedBook);
                 }
             }
             return catalogRepository.save(catalog);
@@ -209,7 +216,13 @@ public class CatalogService {
             System.out.println("Reverting return for CatalogBook with id: " + catalogBookId);
             catalogBook.setReturnState(false);
             catalogBook.setFine(0.0);
-
+            // get book id
+            String bookId = catalogBook.getBook().getId();
+            // get book by id and update available count
+            Book updatedBook = bookRepository.findById(bookId)
+                    .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookId));
+            updatedBook.setAvailableCount(updatedBook.getAvailableCount() - 1);
+            bookRepository.save(updatedBook);
             // If the catalog was marked complete, revert it
             if ("complete".equals(catalog.getCompleteState())) {
                 catalog.setCompleteState("borrow");
