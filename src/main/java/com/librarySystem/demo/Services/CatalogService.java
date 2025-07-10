@@ -54,7 +54,13 @@ public class CatalogService {
                     .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookReq.getBookId()));
             // check if the book is available
             if (!book.getAvailability()) {
-                throw new RuntimeException("Book with ID " + bookReq.getBookId() + " is not available now.");
+                throw new RuntimeException(
+                        "Book with ID " + bookReq.getBookId() + " is not available currently in Library.");
+            }
+
+            if (bookReq.getQuantity() > book.getAvailableCount()) {
+                throw new BadRequestException(
+                        "Requested quantity for book with ID " + bookReq.getBookId() + " not available now.");
             }
 
             for (int i = 0; i < bookReq.getQuantity(); i++) {
@@ -66,6 +72,10 @@ public class CatalogService {
                 catalogBook.setReturnState(false);
                 catalogBooks.add(catalogBook);
             }
+            // update book available count
+            book.setAvailableCount(book.getAvailableCount() - bookReq.getQuantity());
+            // update in db
+            bookRepository.save(book);
 
             totalQuantity += bookReq.getQuantity();
         }
@@ -109,6 +119,13 @@ public class CatalogService {
                         if (diffInDays > 0) {
                             cb.setFine(cb.getFine() + (diffInDays * 20)); // Assuming a fine of 5 per day
                         }
+                        // get book id
+                        String bookId = cb.getBook().getId();
+                        // get book by id and update available count
+                        Book updatedBook = bookRepository.findById(bookId)
+                                .orElseThrow(() -> new NotFoundException("The book has removed under id: " + bookId));
+                        updatedBook.setAvailableCount(updatedBook.getAvailableCount() + 1);
+                        bookRepository.save(updatedBook);
                     }
                     cb.setReturnState(true);
                 }
@@ -133,6 +150,13 @@ public class CatalogService {
                                     cb.setFine(cb.getFine() + (diffInDays * 5)); // Assuming a fine of 5 per day
                                 }
                             }
+                            // get book id
+                            String bookId = cb.getBook().getId();
+                            // get book by id and update available count
+                            Book updatedBook = bookRepository.findById(bookId)
+                                    .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookId));
+                            updatedBook.setAvailableCount(updatedBook.getAvailableCount() + 1);
+                            bookRepository.save(updatedBook);
                             cb.setReturnState(true);
                             quantityToUpdate--;
                         }
@@ -161,6 +185,13 @@ public class CatalogService {
                 for (CatalogBook cb : catalog.getCatalogBooks()) {
                     cb.setReturnState(false);
                     cb.setFine(0.0);
+                    // get book id
+                    String bookId = cb.getBook().getId();
+                    // get book by id and update available count
+                    Book updatedBook = bookRepository.findById(bookId)
+                            .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookId));
+                    updatedBook.setAvailableCount(updatedBook.getAvailableCount() - 1);
+                    bookRepository.save(updatedBook);
                 }
             }
             return catalogRepository.save(catalog);
@@ -185,7 +216,13 @@ public class CatalogService {
             System.out.println("Reverting return for CatalogBook with id: " + catalogBookId);
             catalogBook.setReturnState(false);
             catalogBook.setFine(0.0);
-
+            // get book id
+            String bookId = catalogBook.getBook().getId();
+            // get book by id and update available count
+            Book updatedBook = bookRepository.findById(bookId)
+                    .orElseThrow(() -> new NotFoundException("Book not found with id: " + bookId));
+            updatedBook.setAvailableCount(updatedBook.getAvailableCount() - 1);
+            bookRepository.save(updatedBook);
             // If the catalog was marked complete, revert it
             if ("complete".equals(catalog.getCompleteState())) {
                 catalog.setCompleteState("borrow");
@@ -202,11 +239,20 @@ public class CatalogService {
         // get all catalogbooks and mark as pay fine by getCatalogBooks
         Catalog catalog = catalogRepository.findById(CatalogId)
                 .orElseThrow(() -> new NotFoundException("Catalog not found with id: " + CatalogId));
+        // check status = complete
+        if (!"complete".equals(catalog.getCompleteState())) {
+            throw new BadRequestException("Catalog with id " + CatalogId + " is not in complete state.");
+        }
         List<CatalogBook> catalogBooks = catalog.getCatalogBooks();
+        boolean paidAnyFine = false;
         for (CatalogBook cb : catalogBooks) {
             if (!cb.isFinePaid() && cb.getFine() > 0) {
                 cb.setFinePaid(true);
+                paidAnyFine = true;
             }
+        }
+        if (!paidAnyFine) {
+            throw new BadRequestException("No unpaid fines to pay for this catalog.");
         }
         catalog.setCatalogBooks(catalogBooks);
         return catalogRepository.save(catalog);
@@ -221,10 +267,18 @@ public class CatalogService {
                 .filter(cb -> cb.getId().equals(catalogBookId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("CatalogBook not found with id: " + catalogBookId));
-
+        // check catalog state is complete
+        if (!"complete".equals(catalog.getCompleteState())) {
+            throw new BadRequestException("Catalog with id " + catalogId + " is not in complete state.");
+        }
         // mark as pay fine
+        boolean paidAnyFine = false;
         if (!catalogBook.isFinePaid() && catalogBook.getFine() > 0) {
             catalogBook.setFinePaid(true);
+            paidAnyFine = true;
+        }
+        if (!paidAnyFine) {
+            throw new BadRequestException("No unpaid fines to pay for this catalog.");
         }
 
         return catalogRepository.save(catalog);

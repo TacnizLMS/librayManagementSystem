@@ -70,6 +70,30 @@ public class PaymentController {
         }
     }
 
+    // Pay single catalog book fine from cash
+    @PostMapping("/pay-catalog-book-fine-cash/{id}")
+    public ResponseEntity<String> payCatalogBookFineCash(
+            @PathVariable String id, 
+            @RequestBody FinePayBookIdDTO request) {
+        Catalog updatedCatalog = catalogService.payCatalogBookFine(id, request.getCatalogBookId());
+        if (updatedCatalog != null) {
+            return ResponseEntity.ok("Catalog book fine paid successfully with cash! Catalog ID: " + id + ", Book ID: " + request.getCatalogBookId());
+        } else {
+            return ResponseEntity.badRequest().body("Failed to process catalog book fine payment with cash. Please check the Catalog ID and Book ID.");
+        }
+    }
+
+    // pay full catalog fine from cash
+    @PostMapping("/pay-catalog-fine-cash/{id}")
+    public ResponseEntity<String> payCatalogFineCash(@PathVariable String id) {
+        Catalog updatedCatalog = catalogService.payCatalogFine(id);
+        if (updatedCatalog != null) {
+            return ResponseEntity.ok("Catalog fine paid successfully with cash! Catalog ID: " + id);
+        } else {
+            return ResponseEntity.badRequest().body("Failed to process catalog fine payment with cash. Please check the Catalog ID.");
+        }
+    }
+
     @GetMapping("/success")
     public ResponseEntity<String> paymentSuccess() {
         return ResponseEntity.ok("✅ Payment was successful!");

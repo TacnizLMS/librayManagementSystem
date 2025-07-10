@@ -51,6 +51,7 @@ public class BookService {
         book.setLanguage(dto.getLanguage());
         book.setQuantity(dto.getQuantity());
         book.setAvailability(true);
+        book.setAvailableCount(dto.getQuantity());// Assuming availableCount is initially equal to quantity
 
         return bookRepository.save(book);
     }
@@ -60,7 +61,10 @@ public class BookService {
             // Quantity update
             if (bookDetails.getQuantity() != 0) {
                 int updatedQuantity = book.getQuantity() + bookDetails.getQuantity();
+                // available counter also set
+                int updatedAvailableCount = book.getAvailableCount() + bookDetails.getQuantity();
                 book.setQuantity(Math.max(updatedQuantity, 0));
+                book.setAvailableCount(Math.max(updatedAvailableCount, 0));
             }
 
             // Title and Author

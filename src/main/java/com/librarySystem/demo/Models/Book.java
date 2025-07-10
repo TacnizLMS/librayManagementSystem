@@ -10,6 +10,7 @@ public class Book {
     private int quantity;
     private String language;
     private boolean availability;
+    private int availableCount;
 
     public String getId() {
         return id;
@@ -65,6 +66,14 @@ public class Book {
 
     public void setAvailability(boolean availability) {
         this.availability = availability;
+    }
+
+    public int getAvailableCount() {
+        return availableCount;
+    }
+
+    public void setAvailableCount(int availableCount) {
+        this.availableCount = availableCount;
     }
 
 }

@@ -14,14 +14,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.librarySystem.demo.Models.Type;
 import com.librarySystem.demo.Models.User;
 import com.librarySystem.demo.Repository.UserRepository;
 import com.librarySystem.demo.SecurityConfig.JwtProvider;
@@ -160,7 +164,7 @@ public class UserController {
             return new ResponseEntity<>(conflictResponse, HttpStatus.CONFLICT);
         }
 
-         // Generate 7-character ID
+        // Generate 7-character ID
         String shortId = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
                 NanoIdUtils.DEFAULT_ALPHABET, 7);
         // Generate verification token
@@ -233,6 +237,42 @@ public class UserController {
     @GetMapping("/users/all")
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    // user update own details
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody User userDetails) {
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser == null) {
+            return new ResponseEntity<>("User not found with ID: " + id, HttpStatus.NOT_FOUND);
+        }
+        // Update user details
+        if (userDetails.getFullName() != null) {
+            existingUser.setFullName(userDetails.getFullName());
+        }
+        if (userDetails.getMobile() != null) {
+            existingUser.setMobile(userDetails.getMobile());
+        }
+        if (userDetails.getEmail() != null) {
+            existingUser.setEmail(userDetails.getEmail());
+        }
+        // Do not update password or verification token here
+        User updatedUser = userRepository.save(existingUser);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    // delete user from system
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found with ID: " + id, HttpStatus.NOT_FOUND);
+        }
+        String message = "Your account has been deleted from the LMS system.";
+        String email = user.getEmail();
+        userRepository.delete(user);
+        emailService.sendVerificationEmail(message, email);
+        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
 }
