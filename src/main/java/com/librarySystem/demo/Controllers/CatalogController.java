@@ -37,6 +37,12 @@ public class CatalogController {
         return catalogService.getAllCatalogByUserId(userId);
     }
 
+    // Get catalog resently willing to expire
+    @GetMapping("/recently-expire/{userId}")
+    public Catalog getRecentlyExpireCatalogs(@PathVariable String userId) {
+        return catalogService.getRecentlyExpireCatalogs(userId);
+    }  
+
     // Add catalog
     @PostMapping("/add")
     public Catalog addCatalog(@RequestBody CatalogRequestDTO catalog) {

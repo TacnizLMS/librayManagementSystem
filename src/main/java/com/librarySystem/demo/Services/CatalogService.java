@@ -41,6 +41,28 @@ public class CatalogService {
         return catalogRepository.findByUserId(userId);
     }
 
+    public Catalog getRecentlyExpireCatalogs(String userId) {
+        List<Catalog> catalogs = catalogRepository.findByUserId(userId);
+        if (catalogs == null || catalogs.isEmpty()) {
+            throw new NotFoundException("No catalogs found for user with id: " + userId);
+        }
+        Date currentDate = new Date();
+        Catalog nearestCatalog = null;
+        long nearestTimeDiff = Long.MAX_VALUE;
+
+        for (Catalog catalog : catalogs) {
+            if ("borrow".equals(catalog.getCompleteState()) && catalog.getExpiredDate() != null) {
+                long timeDiff = catalog.getExpiredDate().getTime() - currentDate.getTime();
+                if (timeDiff > 0 && timeDiff < nearestTimeDiff) {
+                    nearestTimeDiff = timeDiff;
+                    nearestCatalog = catalog;
+                }
+            }
+        }
+
+        return nearestCatalog;
+    }
+
     public Catalog addCatalog(CatalogRequestDTO request) {
         Catalog catalog = new Catalog();
         catalog.setUserId(request.getUserId());
