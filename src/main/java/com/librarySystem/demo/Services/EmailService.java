@@ -22,7 +22,7 @@ public class EmailService {
     
 
     public void sendVerificationEmail(String toEmail, String token, String role) {
-        String link = "http://localhost:8080/auth/verify?token=" + token;
+        String link = "https://libraymanagementsystem-production.up.railway.app/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         if (role.equals("Admin")) {
