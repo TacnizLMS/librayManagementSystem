@@ -25,6 +25,7 @@ public class PaymentService {
         private CatalogRepository catalogRepository;
 
         private static final Long MIN_LKR_IN_CENTS = 15200L;
+        private static final String BASE_URL = "https://libraymanagementsystem-production.up.railway.app";
 
         public String createCheckoutSession(String productName, Double amount, String description) throws Exception {
                 Stripe.apiKey = stripeSecretKey;
@@ -35,8 +36,8 @@ public class PaymentService {
                                 productName,
                                 description,
                                 amountInCents,
-                                "http://localhost:8080/success",
-                                "http://localhost:8080/cancel");
+                                BASE_URL + "/success",
+                                BASE_URL + "/cancel");
         }
 
         public String createCatalogFinePaymentSession(String catalogId) throws Exception {
@@ -61,8 +62,8 @@ public class PaymentService {
                                 "Library Catalog Fine Payment",
                                 "Payment for all unpaid fines in catalog: " + catalogId,
                                 amountInCents,
-                                "http://localhost:8080/success/catalog-fine/" + catalogId,
-                                "http://localhost:8080/cancel");
+                                BASE_URL + "/success/catalog-fine/" + catalogId,
+                                BASE_URL + "/cancel");
         }
 
         public String createCatalogBookFinePaymentSession(String catalogId, String catalogBookId) throws Exception {
@@ -88,8 +89,8 @@ public class PaymentService {
                                 "Library Book Fine Payment",
                                 "Fine payment for book in catalog: " + catalogId,
                                 amountInCents,
-                                "http://localhost:8080/success/catalog-book-fine/" + catalogId + "/" + catalogBookId,
-                                "http://localhost:8080/cancel");
+                                BASE_URL +"/success/catalog-book-fine/" + catalogId + "/" + catalogBookId,
+                                BASE_URL +"/cancel");
         }
 
         //  Reusable Stripe Session Creation
