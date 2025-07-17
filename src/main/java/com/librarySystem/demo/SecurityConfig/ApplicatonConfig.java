@@ -39,7 +39,7 @@ public class ApplicatonConfig {
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration ccfg = new CorsConfiguration();
                 ccfg.setAllowedOrigins(Arrays.asList("http://localhost:3000",
-                        "https://lms-two-zeta-48.vercel.app"));
+                        "https://lms-git-master-bytebuzzers-projects.vercel.app"));
                 ccfg.setAllowedMethods(Collections.singletonList("*"));
                 ccfg.setAllowCredentials(true);
                 ccfg.setAllowedHeaders(Collections.singletonList("*"));
