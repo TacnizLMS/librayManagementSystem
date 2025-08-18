@@ -25,7 +25,7 @@ public class PaymentService {
         private CatalogRepository catalogRepository;
 
         private static final Long MIN_LKR_IN_CENTS = 15200L;
-        private static final String BASE_URL = "https://libraymanagementsystem-production.up.railway.app";
+        private static final String BASE_URL = "https://libraymanagementsystem-production-9bbb.up.railway.app";
 
         public String createCheckoutSession(String productName, Double amount, String description) throws Exception {
                 Stripe.apiKey = stripeSecretKey;
